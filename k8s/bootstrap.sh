@@ -10,7 +10,7 @@ kubectl apply -f "$REPO_DIR/k8s/envoy-gateway/"
 
 # Install and Configure MetalLB
 helm repo add metallb https://metallb.github.io/metallb
-helm upgrade --install metallb metallb/metallb -n metallb-system --create-namespace
+helm upgrade --install metallb metallb/metallb --version 0.15.2 -n metallb-system --create-namespace
 kubectl wait --timeout=5m -n metallb-system deployment/metallb-controller --for=condition=Available
 kubectl apply -f "$REPO_DIR/k8s/metallb/"
 
