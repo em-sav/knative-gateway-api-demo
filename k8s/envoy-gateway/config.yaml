@@ -1,0 +1,60 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: envoy-gateway
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+  parametersRef:
+    group: gateway.envoyproxy.io
+    kind: EnvoyProxy
+    name: proxy-config
+    namespace: envoy-gateway-system
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: proxy-config
+  namespace: envoy-gateway-system
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyDeployment:
+        pod:
+          annotations:
+            metallb.io/address-pool: gateway-api
+  telemetry:
+    accessLog:
+      disable: false
+---
+# Namespace Mode need additional RBAC permission
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gateway-helm-cluster-infra-manager
+rules:
+- apiGroups: [""]
+  resources: ["serviceaccounts", "services", "configmaps"]
+  verbs: ["create", "get", "delete", "deletecollection", "patch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "daemonsets"]
+  verbs: ["create", "get", "delete", "deletecollection", "patch"]
+- apiGroups: ["autoscaling", "policy"]
+  resources: ["horizontalpodautoscalers", "poddisruptionbudgets"]
+  verbs: ["create", "get", "delete", "deletecollection", "patch"]
+- apiGroups: ["authentication.k8s.io"]
+  resources: ["tokenreviews"]
+  verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gateway-helm-cluster-infra-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: 'gateway-helm-cluster-infra-manager'
+subjects:
+- kind: ServiceAccount
+  name: 'envoy-gateway'
+  namespace: 'envoy-gateway-system'

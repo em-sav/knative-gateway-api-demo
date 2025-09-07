@@ -1,0 +1,56 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: gateway
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: knative-gateway
+  namespace: gateway
+spec:
+  gatewayClassName: envoy-gateway
+  listeners:
+  - name: http
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: All
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: default-route
+  namespace: gateway
+spec:
+  parentRefs:
+    - name: knative-gateway
+      namespace: gateway
+  rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /
+      filters:
+      - type: ExtensionRef
+        extensionRef:
+          group: gateway.envoyproxy.io
+          kind: HTTPRouteFilter
+          name: default-direct-response
+  hostnames:
+    - knative-serving.cncf.demo
+    - fallback.knative-serving.cncf.demo
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: HTTPRouteFilter
+metadata:
+  name: default-direct-response
+  namespace: gateway
+spec:
+  directResponse:
+    contentType: text/plain
+    statusCode: 404
+    body:
+      type: Inline
+      inline: "Hey, you've reach the External Gateway, but there's nothing here!"
