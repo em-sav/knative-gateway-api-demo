@@ -1,32 +1,3 @@
-apiVersion: gateway.networking.k8s.io/v1
-kind: GatewayClass
-metadata:
-  name: envoy-gateway
-spec:
-  controllerName: gateway.envoyproxy.io/gatewayclass-controller
-  parametersRef:
-    group: gateway.envoyproxy.io
-    kind: EnvoyProxy
-    name: proxy-config
-    namespace: envoy-gateway-system
----
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: EnvoyProxy
-metadata:
-  name: proxy-config
-  namespace: envoy-gateway-system
-spec:
-  provider:
-    type: Kubernetes
-    kubernetes:
-      envoyDeployment:
-        pod:
-          annotations:
-            metallb.io/address-pool: gateway-api
-  telemetry:
-    accessLog:
-      disable: false
----
 # Namespace Mode need additional RBAC permission
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
