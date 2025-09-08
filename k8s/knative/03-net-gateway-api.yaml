@@ -362,18 +362,16 @@ metadata:
     app.kubernetes.io/version: "1.18.0"
 data:
   external-gateways: |
-    - class: envoy-gateway
+    - class: istio
       gateway: gateway/knative-gateway
-      service: gateway/knative-gateway
+      service: gateway/knative-gateway-istio
       supported-features:
       - HTTPRouteRequestTimeout
-      - HTTPRouteHostRewrite
 
     # local-gateways defines the Gateway to be used for cluster local traffic
   local-gateways: |
-    - class: envoy-gateway
+    - class: istio
       gateway: gateway/knative-gateway
-      service: gateway/knative-gateway
+      service: gateway/knative-gateway-istio
       supported-features:
       - HTTPRouteRequestTimeout
-      - HTTPRouteHostRewrite

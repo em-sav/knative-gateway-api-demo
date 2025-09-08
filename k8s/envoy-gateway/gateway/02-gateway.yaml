@@ -4,10 +4,7 @@ metadata:
   name: knative-gateway
   namespace: gateway
 spec:
-  gatewayClassName: istio
-  infrastructure:
-    annotations:
-      metallb.io/address-pool: gateway-api
+  gatewayClassName: envoy-gateway
   listeners:
   - name: http
     port: 80

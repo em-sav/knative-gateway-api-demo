@@ -4,11 +4,11 @@ metadata:
   name: cncf-server
   namespace: workload
 spec:
-  traffic:
-  - latestRevision: true
-    percent: 90
-  - revisionName: cncf-server-00001
-    percent: 10
+  # traffic:
+  # - latestRevision: true
+  #   percent: 90
+  # - revisionName: cncf-server-00001
+  #   percent: 10
   template:
     # metadata:
     #   annotations:
