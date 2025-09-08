@@ -12,3 +12,5 @@ spec:
   config:
     network:
       ingress-class: gateway-api.ingress.networking.knative.dev
+    autoscaler:
+      stable-window: "10s"
