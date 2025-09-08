@@ -1,0 +1,14 @@
+---
+apiVersion: operator.knative.dev/v1beta1
+kind: KnativeServing
+metadata:
+  name: knative-serving
+  namespace: knative-serving
+spec:
+  version: "1.18.0"
+  ingress:
+    istio:
+      enabled: false
+  config:
+    network:
+      ingress-class: gateway-api.ingress.networking.knative.dev

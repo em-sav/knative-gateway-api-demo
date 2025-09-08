@@ -19,8 +19,7 @@ spec:
           kind: HTTPRouteFilter
           name: default-direct-response
   hostnames:
-    - knative-serving.cncf.demo
-    - fallback.knative-serving.cncf.demo
+    - '*.demo'
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: HTTPRouteFilter

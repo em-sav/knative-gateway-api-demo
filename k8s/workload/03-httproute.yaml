@@ -1,0 +1,52 @@
+# apiVersion: networking.internal.knative.dev/v1alpha1
+# kind: ClusterDomainClaim
+# metadata:
+#   name: knative-serving.cncf.demo
+# spec:
+#   namespace: workload
+# ---
+# apiVersion: serving.knative.dev/v1beta1
+# kind: DomainMapping
+# metadata:
+#   name: knative-serving.cncf.demo
+#   namespace: workload
+# spec:
+#   ref:
+#     name: cncf-server
+#     kind: Service
+#     apiVersion: serving.knative.dev/v1
+# ---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    networking.knative.dev/ingress.class: gateway-api.ingress.networking.knative.dev
+  name: bandaid-route
+  namespace: workload
+spec:
+  hostnames:
+  - knative-serving.cncf.demo
+  parentRefs:
+  - name: knative-gateway
+    namespace: gateway
+  rules:
+  - backendRefs:
+    - filters:
+      - requestHeaderModifier:
+          set:
+          - name: Knative-Serving-Namespace
+            value: workload
+          - name: Knative-Serving-Revision
+            value: cncf-server-00001
+        type: RequestHeaderModifier
+      group: ""
+      kind: Service
+      name: cncf-server-00001
+      port: 80
+      weight: 100
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+    timeouts:
+      request: 0s

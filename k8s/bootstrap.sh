@@ -18,4 +18,18 @@ kubectl apply -f "$REPO_DIR/k8s/metallb/"
 kubectl apply -f "$REPO_DIR/k8s/gateway/"
 kubectl wait --timeout=5m -n gateway gateway/knative-gateway --for=condition=Programmed
 
-# Install and Configure Knative Serving
+# Install and Configure Knative Operator
+helm repo add knative-operator https://knative.github.io/operator
+helm upgrade --install knative-operator knative-operator/knative-operator --version 1.18.0 -n knative-operator --create-namespace
+kubectl wait --timeout=5m -n knative-operator deployment/knative-operator --for=condition=Available
+
+kubectl apply -f "$REPO_DIR/k8s/knative/01-ns.yaml"
+kubectl apply -f "$REPO_DIR/k8s/knative/02-knative-serving.yaml"
+kubectl wait --timeout=5m -n knative-serving deployment/controller --for=condition=Available
+
+kubectl apply -f "$REPO_DIR/k8s/knative/03-net-gateway-api.yaml"
+kubectl wait --timeout=5m -n knative-serving deployment/net-gateway-api-controller --for=condition=Available
+
+# Install our Workload
+kubectl apply -f "$REPO_DIR/k8s/workload/"
+
