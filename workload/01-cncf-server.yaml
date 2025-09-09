@@ -1,0 +1,21 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: cncf-server
+  namespace: workload
+spec:
+  template:
+    # Pod Spec
+    spec:
+      containers:
+        - image: kennethreitz/httpbin
+          ports:
+            - containerPort: 80
+          env:
+          - name: FEATURE_FLAG_ENABLED
+            value: "false"
+  traffic:
+    - tag: v1
+      latestRevision: true
+      percent: 100
+

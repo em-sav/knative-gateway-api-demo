@@ -14,3 +14,4 @@ spec:
       ingress-class: gateway-api.ingress.networking.knative.dev
     autoscaler:
       stable-window: "10s"
+      container-concurrency-target-default: "10"
