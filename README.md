@@ -83,4 +83,10 @@ kubectl apply -f ./workload/03-cncf-server.yaml
 go run load-test/main.go -url http://knative-serving.cncf.demo/status/201 -n 5000 -c 200
 ```
 
+### 🧹 Cleanup
+
+```bash
+./cluster/cleanup.sh
+```
+
 ![CNCF](https://www.cncf.io/wp-content/uploads/2022/07/cncf-color-bg.svg)
