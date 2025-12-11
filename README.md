@@ -10,7 +10,7 @@
 
 A complete [Knative Serving](https://knative.dev/docs/serving/) demo with [Gateway API](https://gateway-api.sigs.k8s.io/) plugin. This README guides you through setting up a local Kubernetes cluster using [KinD](https://kind.sigs.k8s.io/) and deploying Knative Serving with Gateway API.
 
-[![Knative Presentation (French)](https://i.ytimg.com/vi/81Mpg6mI__0/hqdefault.jpg)]([https://youtu.be/-9CF8pVlUXA?si=82pRXCAUje-02zcJ&t=2542](https://www.youtube.com/watch?v=81Mpg6mI__0&t=4897s))
+[![Knative Presentation (French)](https://i.ytimg.com/vi/81Mpg6mI__0/hqdefault.jpg)](https://www.youtube.com/watch?v=81Mpg6mI__0&t=4897s)
 
 ## 📝 Prerequisites
 
