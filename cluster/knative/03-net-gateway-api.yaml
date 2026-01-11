@@ -20,7 +20,7 @@ metadata:
     networking.knative.dev/ingress-provider: net-gateway-api
     app.kubernetes.io/component: net-gateway-api
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.18.0"
+    app.kubernetes.io/version: "1.20.1"
 aggregationRule:
   clusterRoleSelectors:
     - matchLabels:
@@ -36,7 +36,7 @@ metadata:
     networking.knative.dev/ingress-provider: net-gateway-api
     app.kubernetes.io/component: net-gateway-api
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.18.0"
+    app.kubernetes.io/version: "1.20.1"
 rules:
   - apiGroups: ["gateway.networking.k8s.io"]
     resources: ["httproutes", "referencegrants", "referencepolicies"]
@@ -68,7 +68,7 @@ metadata:
   labels:
     networking.knative.dev/ingress-provider: net-gateway-api
     app.kubernetes.io/component: net-gateway-api
-    app.kubernetes.io/version: "1.18.0"
+    app.kubernetes.io/version: "1.20.1"
     app.kubernetes.io/name: knative-serving
 spec:
   replicas: 1
@@ -95,7 +95,7 @@ spec:
         - name: controller
           # This is the Go import path for the binary that is containerized
           # and substituted here.
-          image: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/controller@sha256:cf6eb5b8d4364976c449d489363e69453d003508bd27cf1548bf1fec78c876c7
+          image: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/controller@sha256:d9d7b43f6cd449eaff11bca14a2fac0c36ee1e28d8a956fb7257da8f1b9855ce
           resources:
             requests:
               cpu: 100m
@@ -152,7 +152,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-gateway-api
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.18.0"
+    app.kubernetes.io/version: "1.20.1"
     networking.knative.dev/ingress-provider: gateway-api
 spec:
   selector:
@@ -166,14 +166,14 @@ spec:
         role: net-gateway-api-webhook
         app.kubernetes.io/component: net-gateway-api
         app.kubernetes.io/name: knative-serving
-        app.kubernetes.io/version: "1.18.0"
+        app.kubernetes.io/version: "1.20.1"
     spec:
       serviceAccountName: controller
       containers:
         - name: webhook
           # This is the Go import path for the binary that is containerized
           # and substituted here.
-          image: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/webhook@sha256:fa238aa79849f272a763a0871472236fb3246bcc5ec6c91692074967e36c50ec
+          image: gcr.io/knative-releases/knative.dev/net-gateway-api/cmd/webhook@sha256:086167756478ee48f8201c5ef9349178f95e27d30f3e16ca52a0ffd75c4d7f33
           resources:
             requests:
               cpu: 20m
@@ -251,7 +251,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-gateway-api
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.18.0"
+    app.kubernetes.io/version: "1.20.1"
     networking.knative.dev/ingress-provider: gateway-api
 
 ---
@@ -278,7 +278,7 @@ metadata:
     role: net-gateway-api-webhook
     app.kubernetes.io/component: net-gateway-api
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.18.0"
+    app.kubernetes.io/version: "1.20.1"
     networking.knative.dev/ingress-provider: gateway-api
 spec:
   ports:
@@ -317,7 +317,7 @@ metadata:
   labels:
     app.kubernetes.io/component: net-gateway-api
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.18.0"
+    app.kubernetes.io/version: "1.20.1"
     networking.knative.dev/ingress-provider: gateway-api
 webhooks:
   - admissionReviewVersions:
@@ -349,7 +349,6 @@ webhooks:
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -359,19 +358,21 @@ metadata:
     networking.knative.dev/ingress-provider: net-gateway-api
     app.kubernetes.io/component: net-gateway-api
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: "1.18.0"
+    app.kubernetes.io/version: "1.20.1"
 data:
   external-gateways: |
-    - class: istio
+    - class: envoy-gateway
       gateway: gateway/knative-gateway
-      service: gateway/knative-gateway-istio
+      service: gateway/knative-gateway
       supported-features:
       - HTTPRouteRequestTimeout
 
     # local-gateways defines the Gateway to be used for cluster local traffic
   local-gateways: |
-    - class: istio
+    - class: envoy-gateway
       gateway: gateway/knative-gateway
-      service: gateway/knative-gateway-istio
+      service: gateway/knative-gateway
       supported-features:
       - HTTPRouteRequestTimeout
+
+---
