@@ -362,16 +362,16 @@ metadata:
 data:
   external-gateways: |
     - class: envoy-gateway
-      gateway: gateway/knative-gateway
-      service: gateway/knative-gateway
+      gateway: gateway/external-knative-gateway
+      service: gateway/external-knative-gateway
       supported-features:
       - HTTPRouteRequestTimeout
 
     # local-gateways defines the Gateway to be used for cluster local traffic
   local-gateways: |
     - class: envoy-gateway
-      gateway: gateway/knative-gateway
-      service: gateway/knative-gateway
+      gateway: gateway/internal-knative-gateway
+      service: gateway/internal-knative-gateway
       supported-features:
       - HTTPRouteRequestTimeout
 

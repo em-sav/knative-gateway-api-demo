@@ -1,17 +1,80 @@
-apiVersion: networking.internal.knative.dev/v1alpha1
-kind: ClusterDomainClaim
-metadata:
-  name: knative-serving.cncf.demo
-spec:
-  namespace: workload
+# apiVersion: networking.internal.knative.dev/v1alpha1
+# kind: ClusterDomainClaim
+# metadata:
+#   name: knative-serving.cncf.demo
+# spec:
+#   namespace: workload
+# ---
+# apiVersion: serving.knative.dev/v1beta1
+# kind: DomainMapping
+# metadata:
+#   name: knative-serving.cncf.demo
+#   namespace: workload
+# spec:
+#   ref:
+#     name: cncf-server
+#     kind: Service
+#     apiVersion: serving.knative.dev/v1
 ---
-apiVersion: serving.knative.dev/v1beta1
-kind: DomainMapping
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
-  name: knative-serving.cncf.demo
+  name: knative-serving-eg-route
   namespace: workload
 spec:
-  ref:
-    name: cncf-server
-    kind: Service
-    apiVersion: serving.knative.dev/v1
+  hostnames:
+  - knative-serving.cncf.demo
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: public-gateway
+    namespace: gateway
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        hostname: cncf-server.workload.svc.cluster.local
+    backendRefs:
+    - name: cncf-server
+      kind: Backend
+      group: gateway.envoyproxy.io
+      port: 80
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /status/422
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        hostname: bell-server.workload.svc.cluster.local
+    backendRefs:
+    - name: bell-server
+      kind: Backend
+      group: gateway.envoyproxy.io
+      port: 80
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: cncf-server
+  namespace: workload
+spec:
+  endpoints:
+    - fqdn:
+        hostname: cncf-server.workload.svc.cluster.local
+        port: 80
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: bell-server
+  namespace: workload
+spec:
+  endpoints:
+    - fqdn:
+        hostname: bell-server.workload.svc.cluster.local
+        port: 80

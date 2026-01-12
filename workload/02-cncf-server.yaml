@@ -13,11 +13,14 @@ spec:
             - containerPort: 80
           env:
           - name: FEATURE_FLAG_ENABLED
-            value: "true"
+            value: "broken"
   traffic:
-    - tag: v2
+    - tag: v3
       latestRevision: true
-      percent: 10
+      percent: 1
+    - tag: v2
+      revisionName: cncf-server-00002
+      percent: 9
     - tag: v1
       revisionName: cncf-server-00001
       percent: 90
