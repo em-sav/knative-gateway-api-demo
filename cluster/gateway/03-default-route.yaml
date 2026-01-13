@@ -5,7 +5,7 @@ metadata:
   namespace: gateway
 spec:
   parentRefs:
-    - name: knative-gateway
+    - name: public-gateway
       namespace: gateway
   rules:
     - matches:

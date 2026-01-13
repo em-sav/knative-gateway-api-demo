@@ -11,11 +11,3 @@ spec:
         - image: kennethreitz/httpbin
           ports:
             - containerPort: 80
-          env:
-          - name: FEATURE_FLAG_ENABLED
-            value: "false"
-  traffic:
-    - tag: v1
-      latestRevision: true
-      percent: 100
-

@@ -13,7 +13,7 @@ spec:
             - containerPort: 80
           env:
           - name: FEATURE_FLAG_ENABLED
-            value: "true"
+            value: "broken"
   traffic:
     - tag: v2
       latestRevision: true
