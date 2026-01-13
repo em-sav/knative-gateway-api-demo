@@ -360,19 +360,20 @@ metadata:
     app.kubernetes.io/name: knative-serving
     app.kubernetes.io/version: "1.20.1"
 data:
-  external-gateways: |
-    - class: envoy-gateway
-      gateway: gateway/external-knative-gateway
-      service: gateway/external-knative-gateway
-      supported-features:
-      - HTTPRouteRequestTimeout
+  # Not necessary since we are handling our own Envoy Gateway as a fare layer to expose our application
+  # This allows us to do much more Ingress logic in the gateway like path-based routing, more flexible cert management
+  # external-gateways: |
+  #   - class: public-gateway
+  #     gateway: gateway/public-gateway
+  #     service: gateway/public-gateway
+  #     supported-features:
+  #     - HTTPRouteRequestTimeout
 
-    # local-gateways defines the Gateway to be used for cluster local traffic
+  # Internal Knative-Gateway handling all Knative Service, Revision and Route lifecycle
   local-gateways: |
-    - class: envoy-gateway
-      gateway: gateway/internal-knative-gateway
-      service: gateway/internal-knative-gateway
+    - class: knative-gateway
+      gateway: gateway/knative-gateway
+      service: gateway/knative-gateway
       supported-features:
       - HTTPRouteRequestTimeout
-
 ---

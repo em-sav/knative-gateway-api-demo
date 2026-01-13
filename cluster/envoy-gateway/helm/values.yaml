@@ -1,0 +1,14 @@
+config:
+  envoyGateway:
+    gateway:
+      controllerName: gateway.envoyproxy.io/gatewayclass-controller
+    provider:
+      type: Kubernetes
+      kubernetes:
+        deploy:
+          type: GatewayNamespace
+    logging:
+      level:
+        default: info
+    extensionApis:
+      enableBackend: true

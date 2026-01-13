@@ -2,23 +2,15 @@ REPO_DIR="$(dirname "$(realpath "$0")")/.."
 
 # Create local Cluster
 docker network create --driver bridge --subnet=172.18.0.0/16 --gateway=172.18.0.1 kind 2>/dev/null || true
-kind create cluster --config="$REPO_DIR/cluster/kind/config.yaml" --name=cncf-cluster 2>/dev/null || true
+kind create cluster --config="$REPO_DIR/cluster/kind/config.yaml" --name=cncf-cluster
 
 # Install gateway API CRDs
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
 
 # Install and Configure Envoy Gateway
-helm upgrade --install eg oci://docker.io/envoyproxy/gateway-helm --set config.envoyGateway.provider.kubernetes.deploy.type=GatewayNamespace --version v1.6.1 -n envoy-gateway-system --create-namespace
+helm upgrade --install eg oci://docker.io/envoyproxy/gateway-helm -f "$REPO_DIR/cluster/envoy-gateway/helm/values.yaml" --version v1.6.1 -n envoy-gateway-system --create-namespace
 kubectl wait --timeout=5m -n envoy-gateway-system deployment/envoy-gateway --for=condition=Available
 kubectl apply -f "$REPO_DIR/cluster/envoy-gateway/"
-kubectl apply -f "$REPO_DIR/cluster/envoy-gateway/gateway"
-
-# Install Istio
-# helm repo add istio-official https://istio-release.storage.googleapis.com/charts
-# helm upgrade --install istio-base istio-official/base --version 1.27.1 -n istio-system --create-namespace
-# helm upgrade --install istiod istio-official/istiod --version 1.27.1 -n istio-system
-# kubectl wait --timeout=5m -n istio-system deployment/istiod --for=condition=Available
-# kubectl apply -f "$REPO_DIR/cluster/istio/"
 
 # Install and Configure MetalLB
 helm repo add metallb https://metallb.github.io/metallb
@@ -27,7 +19,8 @@ kubectl wait --timeout=5m -n metallb-system deployment/metallb-controller --for=
 kubectl apply -f "$REPO_DIR/cluster/metallb/"
 
 # Install and Configure Knative Gateway
-# kubectl apply -f "$REPO_DIR/cluster/gateway/"
+kubectl apply -f "$REPO_DIR/cluster/gateway/"
+kubectl wait --timeout=5m -n gateway gateway/public-gateway --for=condition=Programmed
 kubectl wait --timeout=5m -n gateway gateway/knative-gateway --for=condition=Programmed
 
 # Install and Configure Knative Operator
@@ -37,7 +30,7 @@ kubectl wait --timeout=5m -n knative-operator deployment/knative-operator --for=
 
 kubectl apply -f "$REPO_DIR/cluster/knative/01-ns.yaml"
 kubectl apply -f "$REPO_DIR/cluster/knative/02-knative-serving.yaml"
-kubectl label namespace knative-serving istio-injection=enabled # We need to manually label the knative-serving namespace to be in the Istio dataplane
+kubectl label namespace knative-serving istio-injection=enabled
 sleep 15
 kubectl wait --timeout=5m -n knative-serving deployment/controller --for=condition=Available
 
